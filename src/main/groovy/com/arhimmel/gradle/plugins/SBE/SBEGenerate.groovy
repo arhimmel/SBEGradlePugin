@@ -1,38 +1,20 @@
 package com.arhimmel.gradle.plugins.SBE
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 
-class SBEGenerate extends DefaultTask {
 
-    String configName
+class SBEGenerate extends JavaExec {
 
-    @Input
-    def includeDirs = []
+    String outputDir
 
     @TaskAction
-    def generate() {
+    def void exec() {
 
+
+        jvmArgs = ["-Dsbe.output.dir=$outputDir"]
+
+        logger.warn(super.commandLine.toString())
+        super.exec()
     }
-
-    /*
-    task createSBEClasses(type: JavaExec) {
-        description = "generate SBE files"
-
-        classpath sourceSets.generated.runtimeClasspath
-        main = "uk.co.real_logic.sbe.SbeTool"
-        File res = file("src/main/resources")
-
-        FileTree tree = fileTree(dir: "src/main/resources").matching {
-            include "schemas/**"
-        }
-
-
-        args = tree.getFiles()
-
-        jvmArgs = ["-Dsbe.output.dir=src/generated/java"]
-
-    }
-    */
 }

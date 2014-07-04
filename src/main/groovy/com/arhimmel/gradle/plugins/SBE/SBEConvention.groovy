@@ -13,7 +13,9 @@ class SBEConvention {
 //    String inputDir
 //    String outputDir
 //    String namespace
-
+//
+//    String version;
+//    String sourceSet;
 
     def SBEConvention(Project project) {
 
