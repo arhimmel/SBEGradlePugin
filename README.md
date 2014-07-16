@@ -13,6 +13,8 @@ Basic build.gradle config:
         }
     }
 
+    apply plugin: 'sbe'
+
     configurations {
         sbe
     }

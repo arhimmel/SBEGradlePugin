@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory
 
 class SBEPlugin implements Plugin<Project> {
 
+//    String SBE_CONFIGURATION_NAME = "sbe"
+
     Logger logger = LoggerFactory.getLogger(SBEPlugin.class)
 
     //compile 'uk.co.real-logic:sbe:1.0.1-RC2'
@@ -18,6 +20,15 @@ class SBEPlugin implements Plugin<Project> {
     void apply(final Project project) {
 
         project.apply plugin: 'java'
+
+//        Configuration sbeConfiguration = project.getConfigurations()
+//                .create(SBE_CONFIGURATION_NAME)
+//                .setVisible(false).setTransitive(false)
+//                .setDescription("Task to run sbe")
+
+
+
+
         addJarDependencies(project)
 
 //        SBEConvention convention = new SBEConvention(project)
@@ -33,21 +44,33 @@ class SBEPlugin implements Plugin<Project> {
 
             logger.warn("using: $sourceSet.name")
 
-            def generateSBETaskName = sourceSet.getTaskName('generate', 'sbe')
-
-
-            project.tasks.create(generateSBETaskName, SBEGenerate) {
-                description = "Compiles SBE xml files for source set: $sourceSet.name"
-
-                outputDir = "$sourceSet.output.classesDir.path/generated"
-
-                classpath sourceSet.runtimeClasspath
-                main = "uk.co.real_logic.sbe.SbeTool"
-                args = sourceSet.resources.files
-
-            }
+            addGenerateTask(project, sourceSet)
         }
 
+//        project.sourceSets.all { SourceSet sourceSet ->
+//
+//            if (sourceSet.name.equals("main")) {
+//                sourceSet.getJava().srcDir(
+//                        project.configurations.getByName("sbeRuntime")
+//                )
+//            }
+//        }
+
+    }
+
+    private void addGenerateTask(Project project, SourceSet sourceSet) {
+        def generateSBETaskName = sourceSet.getTaskName('generate', 'sbe')
+
+        //add task to generate .java files
+        project.tasks.create(generateSBETaskName, SBEGenerate) {
+            description = "Compiles SBE xml files for source set: $sourceSet.name"
+
+            outputDir = "$project.buildDir/generated-sources"
+
+            classpath sourceSet.runtimeClasspath
+            main = "uk.co.real_logic.sbe.SbeTool"
+            args = sourceSet.resources.files
+        }
     }
 
     private static void addJarDependencies(Project project) {
